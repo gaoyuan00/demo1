@@ -1,34 +1,30 @@
 package com.example.controller;
 
 import com.example.common.Result;
-import com.example.entity.User;
+import com.example.dto.UserDTO;
+import com.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    @GetMapping("/{id}")
-    public Result<String> getUser(@PathVariable("id") Long id) {
-        String data = "查询成功，正在返回ID为" + id + "的用户信息";
-        return Result.success(data);
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping
-    public Result<String> createUser(@RequestBody User user) {
-        String data = "新增成功，接收到用户：" + user.getName() + "，年龄：" + user.getAge();
-        return Result.success(data);
+    public Result<String> register(@RequestBody UserDTO userDTO) {
+        return userService.register(userDTO);
     }
 
-    @PutMapping("/{id}")
-    public Result<String> updateUser(@PathVariable("id") Long id, @RequestBody User user) {
-        String data = "更新成功，ID" + id + "的用户已修改为：" + user.getName();
-        return Result.success(data);
+    @PostMapping("/login")
+    public Result<String> login(@RequestBody UserDTO userDTO) {
+        return userService.login(userDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public Result<String> deleteUser(@PathVariable("id") Long id) {
-        String data = "删除成功，已移除ID为" + id + "的用户";
-        return Result.success(data);
+    @GetMapping("/{id}")
+    public Result<String> getUser(@PathVariable("id") Long id) {
+        return Result.success("查询成功，正在返回ID为" + id + "的用户信息");
     }
 }

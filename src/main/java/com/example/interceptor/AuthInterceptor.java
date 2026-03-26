@@ -11,20 +11,25 @@ public class AuthInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String uri = request.getRequestURI();
 
-        boolean isCreateUser = "POST".equalsIgnoreCase(method) && "/api/users".equals(uri);
-        boolean isGetUser = "GET".equalsIgnoreCase(method) && uri.startsWith("/api/users/");
+        // ========== 只有这两个接口完全放行 ==========
+        // 1. 登录接口放行
+        boolean isLogin = "/api/users/login".equals(uri);
+        // 2. 注册接口放行
+        boolean isRegister = "POST".equals(method) && "/api/users".equals(uri);
 
-        if (isCreateUser || isGetUser) {
+        if (isLogin || isRegister) {
             return true;
         }
 
+        // ========== 其他所有接口（包括 GET /api/users/{id}）必须校验 Token ==========
         String token = request.getHeader("Authorization");
-        if (token == null || token.isEmpty()) {
+        if (token == null || token.isBlank()) {
             response.setContentType("application/json;charset=UTF-8");
-            String errorJson = "{\"code\":401,\"msg\":\"非法操作：敏感动作[" + method + "]需登录授权\"}";
-            response.getWriter().write(errorJson);
+            String json = "{\"code\":401,\"msg\":\"请先登录，无权限访问\"}";
+            response.getWriter().write(json);
             return false;
         }
+
         return true;
     }
 }

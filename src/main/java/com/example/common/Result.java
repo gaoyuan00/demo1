@@ -17,7 +17,6 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setCode(resultCode.getCode());
         result.setMsg(resultCode.getMsg());
-        result.setData(null);
         return result;
     }
 
