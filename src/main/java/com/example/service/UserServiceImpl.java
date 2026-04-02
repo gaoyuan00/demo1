@@ -1,9 +1,13 @@
 package com.example.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.common.Result;
 import com.example.common.ResultCode;
 import com.example.dto.UserDTO;
+import com.example.entity.User;
+import com.example.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,27 +15,58 @@ import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private static final Map<String, String> userDb = new HashMap<>();
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public Result<String> register(UserDTO userDTO) {
-        if (userDb.containsKey(userDTO.getUsername())) {
+        //1.查询该用户名是否已存在
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, userDTO.getUsername());
+        User dbUser = userMapper.selectOne(queryWrapper);
+        if(dbUser != null){
             return Result.error(ResultCode.USER_HAS_EXISTED);
         }
-        userDb.put(userDTO.getUsername(), userDTO.getPassword());
-        return Result.success("注册成功");
+        //2.组装实体对象
+        User user = new User();
+        user.setName(userDTO.getUsername());
+        user.setPassword(userDTO.getPassword());
+        //3.插入数据库
+        userMapper.insert(user);
+        return Result.success("注册成功!");
     }
 
     @Override
     public Result<String> login(UserDTO userDTO) {
-        if (!userDb.containsKey(userDTO.getUsername())) {
+        // 1. 根据用户名查询
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, userDTO.getUsername());
+        User dbUser = userMapper.selectOne(queryWrapper);
+
+        // 2. 用户不存在
+        if (dbUser == null) {
             return Result.error(ResultCode.USER_NOT_EXIST);
         }
-        String dbPassword = userDb.get(userDTO.getUsername());
-        if (!dbPassword.equals(userDTO.getPassword())) {
+
+        // 3. 校验密码（核心补充）
+        if (!dbUser.getPassword( ).equals(userDTO.getPassword())) {
             return Result.error(ResultCode.PASSWORD_ERROR);
         }
-        String token = "Bearer " + UUID.randomUUID().toString().replace("-", "");
-        return Result.success(token);
+
+        // 4. 登录成功
+        return Result.success("登录成功！");
+    }
+
+    /**
+     * 根据ID查询用户（完整实现）
+     */
+    @Override
+    public Result<String> getUserById(Long id) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            return Result.error(ResultCode.USER_NOT_EXIST);
+        }
+        // 返回用户名（可根据需求修改返回内容）
+        return Result.success("查询成功，用户名为：" + user.getUsername());
     }
 }
