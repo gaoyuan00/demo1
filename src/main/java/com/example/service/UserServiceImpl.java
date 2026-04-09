@@ -8,6 +8,7 @@ import com.example.entity.User;
 import com.example.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,5 +69,15 @@ public class UserServiceImpl implements UserService {
         }
         // 返回用户名（可根据需求修改返回内容）
         return Result.success("查询成功，用户名为：" + user.getUsername());
+    }
+
+    @Override
+    public Result<Object> getUserPage(Integer pageNum, Integer pageSize) {
+        // 1.创建分页对象（当前页码，每页条数）
+        Page<User> pageParam = new Page<>(pageNum, pageSize);
+        // 2.执行分页查询（null为无查询条件，框架自动查总数+分页）
+        Page<User> resultPage = userMapper.selectPage(pageParam, null);
+        // 3.返回结果（含数据列表、总条数、总页数等）
+        return Result.success(resultPage);
     }
 }
