@@ -9,6 +9,7 @@ import com.example.entity.User;
 import com.example.entity.UserInfo;
 import com.example.mapper.UserInfoMapper;
 import com.example.mapper.UserMapper;
+import com.example.security.JwtUtil;
 import com.example.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,6 +32,9 @@ public class UserServiceImpl implements UserService {
     
     @Autowired
     private StringRedisTemplate redisTemplate;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
     
     private static final String CACHE_KEY_PREFIX = "user:detail:";
 
@@ -59,11 +63,12 @@ public class UserServiceImpl implements UserService {
             return Result.error(ResultCode.USER_NOT_EXIST);
         }
 
-        if (!dbUser.getPassword( ).equals(userDTO.getPassword())) {
+        if (!dbUser.getPassword().equals(userDTO.getPassword())) {
             return Result.error(ResultCode.PASSWORD_ERROR);
         }
 
-        return Result.success("登录成功！");
+        String jwt = jwtUtil.generateToken(userDTO.getUsername());
+        return Result.success(jwt);
     }
 
     @Override
