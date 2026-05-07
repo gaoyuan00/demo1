@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot 3.x 父工程（3.0.0 基础版，稳定兼容） -->
+    <!-- Spring Boot 3.x 父工程（升级到 3.2.4 以兼容 Spring AI Alibaba） -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.0</version> <!-- 升级到 3.x 基础版，也可替换为 3.2.4（最新稳定版） -->
+        <version>3.2.4</version>
         <relativePath/>
     </parent>
 
@@ -42,8 +42,8 @@
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.3.1</version>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.7</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -94,6 +94,18 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.12.6</version>
             <scope>runtime</scope>
+        </dependency>
+        <!-- Spring AI Alibaba Agent Framework -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-agent-framework</artifactId>
+            <version>1.1.2.0</version>
+        </dependency>
+        <!-- DashScope ChatModel支持-->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+            <version>1.1.2.0</version>
         </dependency>
     </dependencies>
 
