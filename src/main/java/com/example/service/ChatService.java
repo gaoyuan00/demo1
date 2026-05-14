@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.dto. ChatRequestDTO;
+import com.example.vo.ChatResponseVO;
 public interface ChatService {
-    String chat(String message);
+    ChatResponseVO chat(ChatRequestDTO requestDT0);
 }

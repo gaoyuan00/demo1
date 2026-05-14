@@ -19,9 +19,8 @@ public class ChatController {
     }
 
     @PostMapping
-    public Result<ChatResponseVO> chat(@RequestBody ChatRequestDTO requestDTO) {
-        String answer = chatService.chat(requestDTO.getMessage());
-        ChatResponseVO responseVO = new ChatResponseVO(requestDTO.getMessage(), answer);
-        return Result.success(responseVO);
+    public Result<ChatResponseVO> chat (@RequestBody ChatRequestDTO requestDTO) {
+        ChatResponseVO responseVO = chatService.chat (requestDTO);
+        return Result. success(responseVO);
     }
 }
